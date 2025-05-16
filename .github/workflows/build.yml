@@ -33,6 +33,9 @@ jobs:
         idf.py set-target esp32s3
         idf.py build
 
+    - name: List build directory contents
+      run: ls -l build/
+
     - name: Upload firmware artifacts
       uses: actions/upload-artifact@v2
       with:
