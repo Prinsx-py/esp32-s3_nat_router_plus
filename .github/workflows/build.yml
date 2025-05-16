@@ -1,0 +1,40 @@
+name: Build ESP32 NAT Router Plus for ESP32-S3
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Install ESP-IDF
+      run: |
+        git clone --recursive https://github.com/espressif/esp-idf.git
+        cd esp-idf
+        ./install.sh esp32s3
+        . ./export.sh
+
+    - name: Build firmware
+      run: |
+        . ./esp-idf/export.sh
+        idf.py set-target esp32s3
+        idf.py build
+
+    - name: Upload firmware artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: esp32s3-firmware
+        path: build/*.bin
